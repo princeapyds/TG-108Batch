@@ -1,18 +1,27 @@
+# load all the required libraries
 from flask import Flask,jsonify,request
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
 import numpy as np
 import joblib
 
+# create object
 app = Flask(__name__)
 
+
+# create end point to  train your model and save training data in pickle file
 @app.route('/train_model')
 def train():
+    # load data
     data = pd.read_excel('chemical_industry_data.xlsx')
+    # split columns
     x = data.iloc[:, 1:7]
     y = data['Spuriosity Index(0/1)']
+    # create object for Algo class
     logm = LogisticRegression()
+    # train the model
     logm.fit(x, y)
+    # Save trainig results in pickle file
     joblib.dump(logm, 'train.pkl')
     return "Model trained successfully"
 
@@ -40,3 +49,4 @@ def test():
         return "True Alarm, Danger "
 
 app.run(port=5008)
+
